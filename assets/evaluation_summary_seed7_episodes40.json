@@ -1,0 +1,7 @@
+{
+  "episodes": 40,
+  "seed": 7,
+  "evaluation_episodes": 10,
+  "ppo_deterministic_mean_reward": -28.49037843764546,
+  "random_policy_mean_reward": -72.59060647390794
+}

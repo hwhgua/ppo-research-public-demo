@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+logs/
+outputs/
+*.csv
+*.png
+*.pt
+*.pth
+*.onnx
+*.zip
+!assets/
+!assets/*.png
