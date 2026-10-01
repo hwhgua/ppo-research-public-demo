@@ -60,6 +60,32 @@ position change = step_size × effective action
 
 在預設的 `step_size = 0.15` 下，`direction = +1, magnitude = 1.0` 會使位置增加 `0.15`；`direction = +1, magnitude = 0.5` 約增加 `0.075`；`direction = -1, magnitude = 0.4` 約減少 `0.06`。距離目標越近，reward 越高，過大的 magnitude 則會產生成本。每個 episode 仍會從不同的初始位置開始，讓 Agent 不會只適應單一初始狀態。
 
+### Reward Function
+
+每一步的 reward 由「接近目標」與「控制幅度成本」組成：
+
+$$
+r_t = - (position_{t+1} - target)^2 - 0.01 \cdot magnitude_t^2
+$$
+
+其中，環境先依混合 action 更新位置：
+
+$$
+position_{t+1} = clip(position_t + 0.15 \cdot direction_t \cdot magnitude_t, -1.5, 1.5)
+$$
+
+- 第一項是目標距離的平方誤差；更新後的位置越接近 target，reward 越接近 `0`。
+- 第二項是 magnitude cost；幅度越大，扣分越多，鼓勵 Agent 使用足夠但不過大的移動幅度。
+- `direction` 只決定正／負方向；`magnitude` 決定最大移動幅度的使用比例與成本。
+
+例如，當 `target = 0.8`、更新後 `position = 0.7`、`magnitude = 0.5` 時：
+
+```text
+reward = -(0.7 - 0.8)^2 - 0.01 × 0.5^2
+       = -0.0125
+整個 episode 的總 reward，為每一步 reward 的加總。
+```
+
 ### Actor, Critic, and Rollout
 
 Actor 根據 state 建立兩個 action distribution；Critic 估計目前 state 的未來回報。每個 episode 會收集 state、direction、magnitude、reward、done、joint log probability 與 value estimate，形成一批 rollout 資料供後續更新。
